@@ -12,15 +12,16 @@ namespace Loggma1.Pages.Clients
         {
             try
             {
-                String connectionString = "Data Source = localhost\\MSSQLSERVER01; Initial Catalog = mystore; Integrated Security = True";
-                using(SqlConnection connection = new SqlConnection(connectionString)) {
-                connection.Open();
-                String sql = "SELECT * From clients";
+                String connectionString = "Data Source=localhost\\MSSQLSERVER01;Initial Catalog=mystore;Integrated Security=True";
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    String sql = "SELECT * FROM clients";
                     using (SqlCommand command = new SqlCommand(sql, connection))
                     {
-                        using(SqlDataReader reader = command.ExecuteReader())
+                        using (SqlDataReader reader = command.ExecuteReader())
                         {
-                            while(reader.Read())
+                            while (reader.Read())
                             {
                                 ClientInfo clientInfo = new ClientInfo();
                                 clientInfo.id = "" + reader.GetInt32(0);
@@ -28,7 +29,7 @@ namespace Loggma1.Pages.Clients
                                 clientInfo.email = reader.GetString(2);
                                 clientInfo.phone = reader.GetString(3);
                                 clientInfo.address = reader.GetString(4);
-                                clientInfo.created_at=reader.GetDateTime(5).ToString();
+                                clientInfo.identityNumber = reader.GetString(5);
                                 listClients.Add(clientInfo);
                             }
                         }
@@ -37,11 +38,11 @@ namespace Loggma1.Pages.Clients
             }
             catch (Exception ex)
             {
-
-                Console.WriteLine("Exception: "+ex.ToString());
+                Console.WriteLine("Exception: " + ex.ToString());
             }
         }
     }
+
     public class ClientInfo
     {
         public string id;
@@ -49,7 +50,6 @@ namespace Loggma1.Pages.Clients
         public string email;
         public string phone;
         public string address;
-        public string created_at;
-        ///git denemesi
+        public string identityNumber;
     }
 }
