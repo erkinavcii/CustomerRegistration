@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.ComponentModel.DataAnnotations;
 using System.Data.SqlClient;
+using System.Text.RegularExpressions;
 
 namespace Loggma1.Pages.Clients
 {
@@ -53,11 +55,22 @@ namespace Loggma1.Pages.Clients
             clientInfo.address = Request.Form["address"];
             clientInfo.identityNumber = Request.Form["identityNumber"]; // Ekledik
 
-            if (clientInfo.id.Length == 0 || clientInfo.name.Length == 0 ||
-                clientInfo.email.Length == 0 || clientInfo.phone.Length == 0 ||
-                clientInfo.address.Length == 0 || clientInfo.identityNumber.Length == 0) // Kontrolü güncelledik
+            if (string.IsNullOrEmpty(clientInfo.name) || string.IsNullOrEmpty(clientInfo.email)
+                 || string.IsNullOrEmpty(clientInfo.phone) || string.IsNullOrEmpty(clientInfo.address)
+                 || string.IsNullOrEmpty(clientInfo.identityNumber))
             {
                 errorMessage = "All fields are required";
+                return;
+            }
+            if (!IsValidEmail(clientInfo.email))
+            {
+                errorMessage = "Please enter a valid email address.";
+                return;
+            }
+            // TC kimlik numarasýnýn formatýný kontrol et
+            if (!IsValidTcNumber(clientInfo.identityNumber))
+            {
+                errorMessage = "Invalid Identity Number";
                 return;
             }
 
@@ -89,6 +102,16 @@ namespace Loggma1.Pages.Clients
                 return;
             }
             Response.Redirect("/Clients/Index");
+
+        }
+        private bool IsValidEmail(string email)
+        {
+            return new EmailAddressAttribute().IsValid(email);
+        }
+        private bool IsValidTcNumber(string tcNumber)
+        {
+            string regexPattern = @"^(?!0{11}|1{11}|2{11}|3{11}|4{11}|5{11}|6{11}|7{11}|8{11}|9{11})([1-9]{1}[0-9]{9}[02468]{1})$";
+            return Regex.IsMatch(tcNumber, regexPattern);
         }
     }
 }

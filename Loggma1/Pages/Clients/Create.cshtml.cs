@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Data.SqlClient;
+using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 
 namespace Loggma1.Pages.Clients
 {
@@ -15,7 +17,7 @@ namespace Loggma1.Pages.Clients
 
         }
 
-        public void OnPost()
+        public void OnPost(ClientInfo clientInfo)
         {
             clientInfo.name = Request.Form["name"];
             clientInfo.email = Request.Form["email"];
@@ -30,7 +32,17 @@ namespace Loggma1.Pages.Clients
                 errorMessage = "All fields are required";
                 return;
             }
-
+            if (!IsValidEmail(clientInfo.email))
+            {
+                errorMessage = "Please enter a valid email address.";
+                return;
+            }
+            // TC kimlik numarasýnýn formatýný kontrol et
+            if (!IsValidTcNumber(clientInfo.identityNumber))
+            {
+                errorMessage = "Invalid Identity Number";
+                return;
+            }
             try
             {
                 string connectionString = "Data Source=localhost\\MSSQLSERVER01;Initial Catalog=mystore;Integrated Security=True";
@@ -61,5 +73,16 @@ namespace Loggma1.Pages.Clients
                 errorMessage = ex.Message;
             }
         }
+        private bool IsValidEmail(string email)
+        {
+            return new EmailAddressAttribute().IsValid(email);
+        }
+        private bool IsValidTcNumber(string tcNumber)
+        {
+            string regexPattern = @"^(?!0{11}|1{11}|2{11}|3{11}|4{11}|5{11}|6{11}|7{11}|8{11}|9{11})([1-9]{1}[0-9]{9}[02468]{1})$";
+            return Regex.IsMatch(tcNumber, regexPattern);
+        }
     }
+
+
 }
