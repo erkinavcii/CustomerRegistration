@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Loggma1.Pages.Clients;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.SqlClient;
+using System.Text.RegularExpressions;
 
 namespace Loggma1.Controllers
 {
@@ -109,6 +111,16 @@ namespace Loggma1.Controllers
             {
                 return BadRequest("All fields are required");
             }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (!IsValidTcIdentityNumber(clientInfo.IdentityNumber))
+            {
+                ModelState.AddModelError("IdentityNumber", "Invalid T.C. Identity Number format");
+                return BadRequest(ModelState);
+            }
 
             try
             {
@@ -139,10 +151,27 @@ namespace Loggma1.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        private bool IsValidTcIdentityNumber(string identityNumber)
+        {
+            // Türkiye Cumhuriyeti T.C. kimlik numarası için uygun bir regular expression kullanabilirsiniz
+            // Örnek olarak: 11 haneli ve sadece rakamlardan oluşan bir T.C. kimlik numarasını kontrol ediyoruz
+            string tcIdentityNumberRegex = "^[0-9]{11}$";
+            return Regex.IsMatch(identityNumber, tcIdentityNumberRegex);
+        }
 
         [HttpPut("{id}")]
         public IActionResult UpdateClient(int id, ClientInfo updatedClientInfo)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (!IsValidTcIdentityNumber(updatedClientInfo.IdentityNumber))
+            {
+                ModelState.AddModelError("IdentityNumber", "Invalid T.C. Identity Number format");
+                return BadRequest(ModelState);
+            }
             try
             {
                 string connectionString = _configuration.GetConnectionString("DefaultConnection");
