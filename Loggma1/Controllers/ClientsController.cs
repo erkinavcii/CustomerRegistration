@@ -1,10 +1,15 @@
 ﻿using Loggma1.Pages.Clients;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.SqlClient;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Loggma1.Controllers
@@ -21,6 +26,7 @@ namespace Loggma1.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult GetClients()
         {
             List<ClientInfo> clients = new List<ClientInfo>();
@@ -63,6 +69,7 @@ namespace Loggma1.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public IActionResult GetClient(int id)
         {
             try
@@ -104,6 +111,7 @@ namespace Loggma1.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult Create(ClientInfo clientInfo)
         {
             if (string.IsNullOrEmpty(clientInfo.Name) || string.IsNullOrEmpty(clientInfo.Email)
@@ -151,15 +159,9 @@ namespace Loggma1.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        private bool IsValidTcIdentityNumber(string identityNumber)
-        {
-            // Türkiye Cumhuriyeti T.C. kimlik numarası için uygun bir regular expression kullanabilirsiniz
-            // Örnek olarak: 11 haneli ve sadece rakamlardan oluşan bir T.C. kimlik numarasını kontrol ediyoruz
-            string tcIdentityNumberRegex = "^[0-9]{11}$";
-            return Regex.IsMatch(identityNumber, tcIdentityNumberRegex);
-        }
 
         [HttpPut("{id}")]
+        [Authorize]
         public IActionResult UpdateClient(int id, ClientInfo updatedClientInfo)
         {
             if (!ModelState.IsValid)
@@ -201,9 +203,24 @@ namespace Loggma1.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
+        /// <summary>
+        /// Postmanda Update işlemi yapma adımları
+        /// put seçilecek sonrasında http://localhost:32387/api/Clients/1 (burada 1, güncellenecek istemcinin id'si)
+        /// Headers bölümüne geçin ve Authorization başlığını ekleyin. Değeri olarak "Bearer" ile başlayan ve önceki adımlarda aldığınız JWT token'ını ekleyin.
+        /// Body sekmesine geçin ve "raw" seçeneğini seçin. Aşağıda verilen gibi güncel istemci verilerini JSON formatında ekleyin:
+        //{
+        //    "name": "Updated Name",
+        //    "email": "updated@example.com",
+        //    "phone": "1234567890",
+        //    "address": "Updated Address",
+        //    "identityNumber": "12345678901"
+        //}
+        //şeklinde send yapıldıgında seçili id varsa ve isterler geçerliyse 200 döndürmeli eğer bulamazsa 404 döndürmeli , eğer bearer yanlışsa 401 döndürmeli
 
 
-        [HttpDelete("{id}")]
+
+    [HttpDelete("{id}")]
+        [Authorize]
         public IActionResult DeleteClient(int id)
         {
             try
@@ -228,8 +245,121 @@ namespace Loggma1.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
+
+        // Kullanıcı adı ve şifre kontrolü burada yapılır.Kullanıcı bu post isteğini kullanarak kendine token üretebilir ve bu tokeni diğer istekleri(update,create,get) gerçekleştirirken authorization kısmına bearer olarak ekler.
+        [HttpPost("Login")]
+        public IActionResult Login([FromQuery] string username, [FromQuery] string password)
+        {
+            if (IsValidUser(username, password))
+            {
+                var token = GenerateJwtToken(username);
+                return Ok(new { token });
+            }
+            return Unauthorized();
+        }
+
+        [HttpPost("CheckToken")]
+        public IActionResult CheckToken([FromBody] string token)
+        {
+            try
+            {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var key = Encoding.UTF8.GetBytes("y9yPvg+2q3eFruhT6rGyTqApFp5PwWkD"); // Secret key
+                var validationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false, // You can configure these values according to your needs
+                    ValidateAudience = false // You can configure these values according to your needs
+                };
+
+                SecurityToken validatedToken;
+                var principal = tokenHandler.ValidateToken(token, validationParameters, out validatedToken);
+
+                return Ok("Tebrikler, token doğrulandı!");
+            }
+            catch (Exception ex)
+            {
+                return Unauthorized("Token doğrulanamadı.");
+            }
+        }
+        private bool IsValidToken(string token)
+        {
+            try
+            {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var key = Encoding.UTF8.GetBytes("y9yPvg+2q3eFruhT6rGyTqApFp5PwWkD"); // Secret key
+                var validationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false, // You can configure these values according to your needs
+                    ValidateAudience = false // You can configure these values according to your needs
+                };
+
+                SecurityToken validatedToken;
+                var principal = tokenHandler.ValidateToken(token, validationParameters, out validatedToken);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+        }
+        private bool IsValidUser(string username, string password)
+        {
+            // Bu örnekte, varsayılan olarak kullanıcı adı ve şifreleri bir koleksiyonda saklıyoruz.
+            // Veritabanından alınacak olan verileri kullanarak gerçek bir kullanıcı doğrulama işlemi yapmak gerek.
+            var users = new List<User>
+    {
+        new User { Username = "admin", Password = "admin" },
+        new User { Username = "erkin", Password = "erkin" }
+    };
+
+            var user = users.FirstOrDefault(u => u.Username == username && u.Password == password);
+
+            return user != null;
+        }
+        private bool IsValidTcIdentityNumber(string identityNumber)
+        {
+            // Türkiye Cumhuriyeti T.C. kimlik numarası için uygun bir regular expression kullanabilirsiniz
+            // Örnek olarak: 11 haneli ve sadece rakamlardan oluşan bir T.C. kimlik numarasını kontrol ediyoruz
+            string tcIdentityNumberRegex = @"^(?!0{11}|1{11}|2{11}|3{11}|4{11}|5{11}|6{11}|7{11}|8{11}|9{11})([1-9]{1}[0-9]{9}[02468]{1})$";
+            return Regex.IsMatch(identityNumber, tcIdentityNumberRegex);
+        }
+
+        private string GenerateJwtToken(string username)
+        {
+            var claims = new List<Claim>
+    {
+        new Claim(ClaimTypes.Name, username)
+        // İhtiyaca göre daha fazla claim ekleyebilirsiniz
+    };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("y9yPvg+2q3eFruhT6rGyTqApFp5PwWkD"));///32 bit uzunluğunda secretkey
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: "your_issuer_here",
+                audience: "your_audience_here",
+                claims: claims,
+                expires: DateTime.Now.AddHours(1), // Token süresi burada ayarlanabilir
+                signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
     }
 
+    // Kullanıcı sınıfı
+    public class User
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+    }
     public class ClientInfo
     {
         public int Id { get; set; }
