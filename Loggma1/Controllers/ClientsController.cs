@@ -129,6 +129,11 @@ namespace Loggma1.Controllers
                 ModelState.AddModelError("IdentityNumber", "Invalid T.C. Identity Number format");
                 return BadRequest(ModelState);
             }
+            // IdentityNumber'ı daha önce kullanılmış mı kontrol et
+            if (IsIdentityNumberAlreadyExist(clientInfo.IdentityNumber))
+            {
+                return BadRequest("This IdentityNumber already exists in the database");
+            }
 
             try
             {
@@ -173,6 +178,10 @@ namespace Loggma1.Controllers
             {
                 ModelState.AddModelError("IdentityNumber", "Invalid T.C. Identity Number format");
                 return BadRequest(ModelState);
+            }
+            if (IsIdentityNumberAlreadyExist(updatedClientInfo.IdentityNumber, id))
+            {
+                return BadRequest("This IdentityNumber already exists in the database");
             }
             try
             {
@@ -351,8 +360,38 @@ namespace Loggma1.Controllers
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+        private bool IsIdentityNumberAlreadyExist(string identityNumber, int? clientId = null)
+        {
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                string sql = "SELECT COUNT(*) FROM clients WHERE IdentityNumber = @IdentityNumber";
+
+                // Eğer güncelleme işlemi yapılıyorsa, mevcut clientId'yi filtrele
+                if (clientId.HasValue)
+                {
+                    sql += " AND id != @ClientId";
+                }
+
+                using (SqlCommand command = new SqlCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue("@IdentityNumber", identityNumber);
+                    if (clientId.HasValue)
+                    {
+                        command.Parameters.AddWithValue("@ClientId", clientId.Value);
+                    }
+
+                    int count = (int)command.ExecuteScalar();
+
+                    return count > 0;
+                }
+            }
+        }
+
 
     }
+
 
     // Kullanıcı sınıfı
     public class User
