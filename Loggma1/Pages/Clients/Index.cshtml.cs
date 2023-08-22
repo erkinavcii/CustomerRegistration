@@ -1,7 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.IdentityModel.Tokens;
 using System.ComponentModel.DataAnnotations;
 using System.Data.SqlClient;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
+using Microsoft.AspNetCore.Http;
 
 namespace Loggma1.Pages.Clients
 {
@@ -13,6 +17,14 @@ namespace Loggma1.Pages.Clients
         {
             try
             {
+                string token = Request.Cookies["JwtToken"];
+
+                if (string.IsNullOrEmpty(token) || !IsValidToken(token))
+                {
+                    // Token geçerli deðilse veya yoksa, Unauthorized hatasý göster
+                    Response.Redirect("/Login"); // Unauthorized
+                    return;
+                }
                 String connectionString = "Data Source=localhost\\MSSQLSERVER01;Initial Catalog=mystore;Integrated Security=True";
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
@@ -41,6 +53,40 @@ namespace Loggma1.Pages.Clients
             {
                 Console.WriteLine("Exception: " + ex.ToString());
             }
+        }
+        private bool IsValidToken(string token)
+        {
+            try
+            {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var key = Encoding.UTF8.GetBytes("y9yPvg+2q3eFruhT6rGyTqApFp5PwWkD"); // Secret key
+                var validationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false, // You can configure these values according to your needs
+                    ValidateAudience = false // You can configure these values according to your needs
+                };
+
+                SecurityToken validatedToken;
+                var principal = tokenHandler.ValidateToken(token, validationParameters, out validatedToken);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+        }
+        // Tokeni silmek için HTTP POST iþlemi
+        public IActionResult OnPostLogout()
+        {
+            // Cookie'deki JwtToken adlý çerezin süresini sonlandýrýn (expire)
+            Response.Cookies.Delete("JwtToken");
+
+            // Kullanýcýyý Login sayfasýna yönlendirin
+            return RedirectToPage("/Login");
         }
     }
 
