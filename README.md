@@ -1,11 +1,13 @@
 # CustomerRegistrationForm
 # Description
+
 This project is an application that allows an authorized (pre-defined) user to access a database and perform CRUD (Create, Read, Update, Delete) operations on registered users' records.
 In addition to providing a user interface for these operations, the application also includes an API (ClientsController) that enables these actions programmatically.
 
 
 # Requirements
-## 1-Development Envoriment: Ensure that you have a suitable development environment for ASP.NET Core applications set up on your machine. You can download and install Visual Studio or use Visual Studio Code with the .NET SDK.
+## 1-Development Envoriment: 
+Ensure that you have a suitable development environment for ASP.NET Core applications set up on your machine. You can download and install Visual Studio or use Visual Studio Code with the .NET SDK.
 ## 2-Database Schema and Initial Data
 ### I use localdatabase to make this project. You can configure your DB for 
 ### Database Schema
