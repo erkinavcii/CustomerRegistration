@@ -12,6 +12,7 @@ Ensure that you have a suitable development environment for ASP.NET Core applica
 ### I use localdatabase to make this project. You can configure your DB for 
 ### Database Schema
 
+- MSSQL
 The application relies on a SQL Server database with the following schema:
 
 - `clients` table:
@@ -28,8 +29,8 @@ When setting up the application, you should populate the `clients` table with sa
 
 | Id | Name             | Email                | Phone       | Address               | IdentityNumber   |
 |----|------------------|----------------------|-------------|-----------------------|------------------|
-| 1  | John Doe         | john@example.com     | 1234567890  | 123 Main St, City     | 12345678901      |
-| 2  | Jane Smith       | jane@example.com     | 9876543210  | 456 Elm St, Town      | 98765432109      |
+| 1  | John Doe         | john@example.com     | 1234567890  | 123 Main St, City     | 94685811754      |
+| 2  | Jane Smith       | jane@example.com     | 9876543210  | 456 Elm St, Town      | 89500091428      |
 
 
 ## I used a local database to develop this application. I have outlined the fundamental requirements below. You can shape the rest according to your needs
@@ -49,7 +50,9 @@ When setting up the application, you should populate the `clients` table with sa
 
 - **Sample Data**: For testing purposes, you may want to populate the `clients` table in the database with sample data. Refer to the "Database Schema and Initial Data" section for more information on the required schema and sample data.
 
-- **JWT Secret Key**: The application uses a secret key for JWT token generation. You should replace the secret key in the `GenerateJwtToken` method of the `ClientsController` with your own secret key. Ensure that the secret key is kept confidential.
+- **JWT Secret Key**: The application uses a secret key for JWT token generation. You should replace the secret key in the `GenerateJwtToken` method of the `ClientsController` with your own secret key. Ensure that the secret key is kept confidential.   
+**SecretKey="y9yPvg+2q3eFruhT6rGyTqApFp5PwWkD"**
+**var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("y9yPvg+2q3eFruhT6rGyTqApFp5PwWkD"));///32 bit long secretkey**
   ```csharp
 
 
