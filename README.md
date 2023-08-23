@@ -87,4 +87,74 @@ To use the API, you may need to authenticate. Refer to the API documentation or 
 # Start Developing: 
 You're ready to start working with the application. Customize it according to your requirements and build your features on top of it.
 #
+#####
+
+# API USAGE
+
+ ## User Authentication
+- **Endpoint**  `/api/Clients/Login`
+- **HTTPMethod** post
+- **Description** Authenticates a user and issues a JWT token for authorization
+- **Requested Parameters** 
+-- **`username`**(string,required): User's name // Valid users for my code are "erkin-erkin" and "admin-admin." 
+-- **`password`**(string,required): User's password
+  -**Response** If authentication is succesfull, it returns a JWT token for other requests.
+ ## Get Clients
+- **Endpoint**  `/api/Clients/CheckToken`
+- **HTTPMethod** post
+- **Description** Checks validity of JWT token.
+- **Requested Body** Should contain a string of JWT token.
+- **Authorization** Requires a valid JWT token provided in `Authorization` HEADER
+- **Response** : If the token is valid, a success message is returned; otherwise, an unauthorized message is returned.
+
+ ## Get Clients
+- **Endpoint**  `/api/Clients/`
+- **HTTPMethod** get
+- **Description** Retrieves a list of clients from db.
+- **Authorization** Requires a valid JWT token provided in `Authorization` HEADER
+## Get Client
+- **Endpoint**  `/api/Clients/{id}`
+- **HTTPMethod** get
+- **Description** Retrieves a client by `ID` from db.
+- **Authorization** Requires a valid JWT token provided in `Authorization` HEADER
+ ## Create Client
+- **Endpoint**  `/api/Clients`
+- **HTTPMethod** post
+- **Description** Creates a new client and adds it to db.
+- **Authorization** Requires a valid JWT token provided in `Authorization` HEADER
+- **Request Body** Should contain JSON object with valid informations of client.
+## Update Client
+- **Endpoint**  `/api/Clients/{id}`
+- **HTTPMethod** put
+- **Description** Updates an existing client's information in db.
+- **Authorization** Requires a valid JWT token provided in `Authorization` HEADER
+- **Request Body** Should contain JSON object with updated informations of client.
+ ## Delete Client
+- **Endpoint**  `/api/Clients/{id}`
+- **HTTPMethod** Delete
+- **Description** Deletes a client from db by `ID`
+- **Authorization** Requires a valid JWT token provided in `Authorization` HEADER
+  
+# Example API Usage 
+## Updating a Client using Postman
+
+To update a client using Postman, follow these steps:
+
+1. Select the HTTP method "PUT."
+
+2. Enter the URL for the client you want to update. The URL should be in the following format: `http://localhost:32387/api/Clients/1`, where `1` represents the ID of the client you want to update.
+
+3. In the "Headers" section, add an "Authorization" header. Set its value to a string starting with "Bearer," followed by the JWT token you obtained in the previous steps.
+
+4. Go to the "Body" section and select the "raw" option. Enter the updated client data in JSON format as shown below:
+
+```json
+{
+    "name": "Updated Name",
+    "email": "updated@example.com",
+    "phone": "1234567890",
+    "address": "Updated Address",
+    "identityNumber": "40641039748"
+}
+
 Feel free to modify these installation instructions to match the specifics of your project. If you have any questions or encounter any issues during the setup, please don't hesitate to reach out for assistance.
