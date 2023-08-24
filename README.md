@@ -43,10 +43,10 @@ When setting up the application, you should populate the `clients` table with sa
   - Update the database connection string in the `appsettings.json` file of the application to match your SQL Server instance. Here's an example of the connection string format:
     ```json
     "ConnectionStrings": {
-      "DefaultConnection": "Server=localhost\\MSSQLSERVER01;Database=mystore;Integrated Security=True"
+      "DefaultConnection": "Server=localhost\\MSSQLSERVER01;Database=mystore;Integrated Security=True;TrustServerCertificate=True"
     }
     ```
-    Make sure to replace `"Server=localhost\\MSSQLSERVER01;Database=mystore;Integrated Security=True"` with the appropriate connection string for your SQL Server.
+    Make sure to replace `"Server=localhost\\MSSQLSERVER01;Database=mystore;Integrated Security=True;TrustServerCertificate=True"` with the appropriate connection string for your SQL Server.
 
 - **Sample Data**: For testing purposes, you may want to populate the `clients` table in the database with sample data. Refer to the "Database Schema and Initial Data" section for more information on the required schema and sample data.
 
@@ -64,7 +64,7 @@ To run this project locally, follow these steps:
 1. **Clone the Repository**: Start by cloning this repository to your local machine. You can do this by running the following command in your terminal:
 
    ```bash
-   [git clone https://github.com/your-username/your-project.git](https://github.com/erkinavcii/CustomerRegistration).
+   [git clone https://github.com/erkinavcii/CustomerRegistration
 
 Database Setup: This project uses a local database. You'll need to set up the database and update the connection string in the app's configuration. Follow these steps:
 
@@ -73,7 +73,7 @@ Open the appsettings.json file in the project and update the DefaultConnection s
 json
 Copy code
 "ConnectionStrings": {
-    "DefaultConnection": "Server=your-server-name;Database=your-database-name;Trusted_Connection=True;"
+    "DefaultConnection": "Server=your-server-name;Database=your-database-name;Trusted_Connection=True;;TrustServerCertificate=True"
 }
 # Build and Run:
  Once the database is set up and the connection string is updated, build and run the application using your preferred development environment. You can use Visual Studio, Visual Studio Code, or any other IDE you prefer for .NET Core development.
