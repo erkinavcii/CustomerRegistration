@@ -1,7 +1,12 @@
 using Loggma1.Controllers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+
 using static Loggma1.Controllers.ClientsController;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,9 +31,15 @@ builder.Services.AddAuthentication(x =>
         };
     });
 builder.Services.AddAuthorization();
+
+// Add DbContext and database connection
+builder.Services.AddDbContext<Loggma1.MyDbContext>(options =>
+    options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
+
 // Add services to the container.
 builder.Services.AddControllers(); // API Controller servisi
 builder.Services.AddRazorPages();
+
 
 var app = builder.Build();
 
@@ -52,6 +63,7 @@ app.UseEndpoints(endpoints =>
     endpoints.MapControllers(); // API isteklerini yönlendirir
     endpoints.MapRazorPages(); // Razor Pages isteklerini yönlendirir
 });
+
 
 app.Run();
 
