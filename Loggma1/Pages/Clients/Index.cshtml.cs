@@ -42,7 +42,7 @@ namespace Loggma1.Pages.Clients
                                 clientInfo.email = reader.GetString(2);
                                 clientInfo.phone = reader.GetString(3);
                                 clientInfo.address = reader.GetString(4);
-                                clientInfo.identityNumber = reader.GetString(5);
+                                clientInfo.IdentityNumber = reader.GetString(5);
                                 listClients.Add(clientInfo);
                             }
                         }
@@ -110,7 +110,7 @@ public class ClientInfo
         public string address { get; set; }
 
         [Required(ErrorMessage = "IdentityNumber is required")]
-        public string identityNumber { get; set; }
+        public string IdentityNumber { get; set; }
     }
 
 }

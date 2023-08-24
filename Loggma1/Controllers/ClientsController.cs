@@ -47,7 +47,7 @@ namespace Loggma1.Controllers
                             {
                                 ClientInfo clientInfo = new ClientInfo
                                 {
-                                    Id = reader.GetInt32(0),
+                                    id = reader.GetInt32(0),
                                     Name = reader.GetString(1),
                                     Email = reader.GetString(2),
                                     Phone = reader.GetString(3),
@@ -89,7 +89,7 @@ namespace Loggma1.Controllers
                             {
                                 ClientInfo clientInfo = new ClientInfo
                                 {
-                                    Id = reader.GetInt32(0),
+                                    id = reader.GetInt32(0),
                                     Name = reader.GetString(1),
                                     Email = reader.GetString(2),
                                     Phone = reader.GetString(3),
@@ -401,7 +401,7 @@ namespace Loggma1.Controllers
     }
     public class ClientInfo
     {
-        public int Id { get; set; }
+        public int id { get; set; }
 
         [Required(ErrorMessage = "Name is required")]
         public string Name { get; set; }

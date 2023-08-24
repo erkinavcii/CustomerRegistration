@@ -23,11 +23,11 @@ namespace Loggma1.Pages.Clients
             clientInfo.email = Request.Form["email"];
             clientInfo.phone = Request.Form["phone"];
             clientInfo.address = Request.Form["address"];
-            clientInfo.identityNumber = Request.Form["identityNumber"];
+            clientInfo.IdentityNumber = Request.Form["IdentityNumber"];
 
             if (string.IsNullOrEmpty(clientInfo.name) || string.IsNullOrEmpty(clientInfo.email)
                  || string.IsNullOrEmpty(clientInfo.phone) || string.IsNullOrEmpty(clientInfo.address)
-                 || string.IsNullOrEmpty(clientInfo.identityNumber))
+                 || string.IsNullOrEmpty(clientInfo.IdentityNumber))
             {
                 errorMessage = "All fields are required";
                 return;
@@ -38,14 +38,14 @@ namespace Loggma1.Pages.Clients
                 return;
             }
             // TC kimlik numarasýnýn formatýný kontrol et
-            if (!IsValidTcNumber(clientInfo.identityNumber))
+            if (!IsValidTcNumber(clientInfo.IdentityNumber))
             {
                 errorMessage = "Invalid Identity Number";
                 return;
             }
             try
             {
-                if (IsIdentityNumberAlreadyExist(clientInfo.identityNumber))
+                if (IsIdentityNumberAlreadyExist(clientInfo.IdentityNumber))
                 {
                     errorMessage = "This Identity Number already exists in the database.";
                     return;
@@ -56,7 +56,7 @@ namespace Loggma1.Pages.Clients
                     connection.Open();
                     string sql = "INSERT INTO clients " +
                         "(name, email, phone, address, IdentityNumber) VALUES" +
-                        "(@name, @email, @phone, @address, @identityNumber);";
+                        "(@name, @email, @phone, @address, @IdentityNumber);";
 
                     using (SqlCommand command = new SqlCommand(sql, connection))
                     {
@@ -64,7 +64,7 @@ namespace Loggma1.Pages.Clients
                         command.Parameters.AddWithValue("@email", clientInfo.email);
                         command.Parameters.AddWithValue("@phone", clientInfo.phone);
                         command.Parameters.AddWithValue("@address", clientInfo.address);
-                        command.Parameters.AddWithValue("@identityNumber", clientInfo.identityNumber);
+                        command.Parameters.AddWithValue("@IdentityNumber", clientInfo.IdentityNumber);
 
                         command.ExecuteNonQuery();
                     }
@@ -87,7 +87,7 @@ namespace Loggma1.Pages.Clients
             string regexPattern = @"^(?!0{11}|1{11}|2{11}|3{11}|4{11}|5{11}|6{11}|7{11}|8{11}|9{11})([1-9]{1}[0-9]{9}[02468]{1})$";
             return Regex.IsMatch(tcNumber, regexPattern);
         }
-        private bool IsIdentityNumberAlreadyExist(string identityNumber)
+        private bool IsIdentityNumberAlreadyExist(string IdentityNumber)
         {
             try
             {
@@ -96,11 +96,11 @@ namespace Loggma1.Pages.Clients
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string sql = "SELECT COUNT(*) FROM clients WHERE IdentityNumber = @identityNumber";
+                    string sql = "SELECT COUNT(*) FROM clients WHERE IdentityNumber = @IdentityNumber";
 
                     using (SqlCommand command = new SqlCommand(sql, connection))
                     {
-                        command.Parameters.AddWithValue("@identityNumber", identityNumber);
+                        command.Parameters.AddWithValue("@IdentityNumber", IdentityNumber);
                         int count = (int)command.ExecuteScalar();
 
                         return count > 0; // Eðer count 0'dan büyükse, ayný kimlik numarasýna sahip müþteri bulunuyor demektir.
