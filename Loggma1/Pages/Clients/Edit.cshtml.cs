@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
 using System.Data.SqlClient;
 using System.Text.RegularExpressions;
-using Loggma1.Models;
 
 namespace Loggma1.Pages.Clients
 {
@@ -30,7 +29,7 @@ namespace Loggma1.Pages.Clients
                         {
                             if (reader.Read())
                             {
-                                clientInfo.id = "" + reader.GetInt32(0);
+                                clientInfo.id = reader.GetInt32(0);
                                 clientInfo.name = reader.GetString(1);
                                 clientInfo.email = reader.GetString(2);
                                 clientInfo.phone = reader.GetString(3);
@@ -49,7 +48,8 @@ namespace Loggma1.Pages.Clients
 
         public void OnPost()
         {
-            clientInfo.id = Request.Form["id"];
+            int.TryParse(Request.Form["id"], out int clientId);
+            clientInfo.id = clientId;
             clientInfo.name = Request.Form["name"];
             clientInfo.email = Request.Form["email"];
             clientInfo.phone = Request.Form["phone"];
@@ -120,7 +120,7 @@ namespace Loggma1.Pages.Clients
             string regexPattern = @"^(?!0{11}|1{11}|2{11}|3{11}|4{11}|5{11}|6{11}|7{11}|8{11}|9{11})([1-9]{1}[0-9]{9}[02468]{1})$";
             return Regex.IsMatch(tcNumber, regexPattern);
         }
-        private bool IsIdentityNumberAlreadyExist(string IdentityNumber, string clientId)
+        private bool IsIdentityNumberAlreadyExist(string IdentityNumber, int clientId)
         {
             try
             {

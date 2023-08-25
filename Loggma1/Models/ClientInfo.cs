@@ -4,7 +4,7 @@ namespace Loggma1.Models
 {
     public class ClientInfo
     {
-        public string id { get; set; }
+        public int id { get; set; }
 
         [Required(ErrorMessage = "Name is required")]
         public string name { get; set; }
