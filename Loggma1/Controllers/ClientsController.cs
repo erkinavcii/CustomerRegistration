@@ -400,26 +400,5 @@ namespace Loggma1.Controllers
         public string Username { get; set; }
         public string Password { get; set; }
     }
-    //public class ClientInfo
-    //{
-    //    public int id { get; set; }
-
-    //    [Required(ErrorMessage = "name is required")]
-    //    public string name { get; set; }
-
-    //    [Required(ErrorMessage = "email is required")]
-    //    [emailaddress(ErrorMessage = "Invalid email format")]
-    //    public string email { get; set; }
-
-    //    [Required(ErrorMessage = "phone is required")]
-    //    [phone(ErrorMessage = "Invalid phone number format")]
-    //    public string phone { get; set; }
-
-    //    [Required(ErrorMessage = "address is required")]
-    //    public string address { get; set; }
-
-    //    [Required(ErrorMessage = "Identity number is required")]
-    //    public string IdentityNumber { get; set; }
-    //}
 
 }
