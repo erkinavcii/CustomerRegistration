@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
 using System.Data.SqlClient;
 using System.Text.RegularExpressions;
+using Loggma1.Models;
 
 namespace Loggma1.Pages.Clients
 {

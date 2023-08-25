@@ -1,5 +1,6 @@
 ﻿using Loggma1.Controllers;
 using Microsoft.EntityFrameworkCore;
+using Loggma1.Models;
 namespace Loggma1;
 public class MyDbContext : DbContext
 {

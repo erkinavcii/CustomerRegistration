@@ -11,6 +11,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Text.RegularExpressions;
+using Loggma1.Models;
 
 namespace Loggma1.Controllers
 {
@@ -48,10 +49,10 @@ namespace Loggma1.Controllers
                                 ClientInfo clientInfo = new ClientInfo
                                 {
                                     id = reader.GetInt32(0),
-                                    Name = reader.GetString(1),
-                                    Email = reader.GetString(2),
-                                    Phone = reader.GetString(3),
-                                    Address = reader.GetString(4),
+                                    name = reader.GetString(1),
+                                    email = reader.GetString(2),
+                                    phone = reader.GetString(3),
+                                    address = reader.GetString(4),
                                     IdentityNumber = reader.GetString(5)
                                 };
                                 clients.Add(clientInfo);
@@ -90,10 +91,10 @@ namespace Loggma1.Controllers
                                 ClientInfo clientInfo = new ClientInfo
                                 {
                                     id = reader.GetInt32(0),
-                                    Name = reader.GetString(1),
-                                    Email = reader.GetString(2),
-                                    Phone = reader.GetString(3),
-                                    Address = reader.GetString(4),
+                                    name = reader.GetString(1),
+                                    email = reader.GetString(2),
+                                    phone = reader.GetString(3),
+                                    address = reader.GetString(4),
                                     IdentityNumber=reader.GetString(5)
                                 };
                                 return Ok(clientInfo);
@@ -114,8 +115,8 @@ namespace Loggma1.Controllers
         [Authorize]
         public IActionResult Create(ClientInfo clientInfo)
         {
-            if (string.IsNullOrEmpty(clientInfo.Name) || string.IsNullOrEmpty(clientInfo.Email)
-                 || string.IsNullOrEmpty(clientInfo.Phone) || string.IsNullOrEmpty(clientInfo.Address)||string.IsNullOrEmpty(clientInfo.IdentityNumber))
+            if (string.IsNullOrEmpty(clientInfo.name) || string.IsNullOrEmpty(clientInfo.email)
+                 || string.IsNullOrEmpty(clientInfo.phone) || string.IsNullOrEmpty(clientInfo.address)||string.IsNullOrEmpty(clientInfo.IdentityNumber))
             {
                 return BadRequest("All fields are required");
             }
@@ -147,10 +148,10 @@ namespace Loggma1.Controllers
 
                     using (SqlCommand command = new SqlCommand(sql, connection))
                     {
-                        command.Parameters.AddWithValue("@name", clientInfo.Name);
-                        command.Parameters.AddWithValue("@email", clientInfo.Email);
-                        command.Parameters.AddWithValue("@phone", clientInfo.Phone);
-                        command.Parameters.AddWithValue("@address", clientInfo.Address);
+                        command.Parameters.AddWithValue("@name", clientInfo.name);
+                        command.Parameters.AddWithValue("@email", clientInfo.email);
+                        command.Parameters.AddWithValue("@phone", clientInfo.phone);
+                        command.Parameters.AddWithValue("@address", clientInfo.address);
                         command.Parameters.AddWithValue("@IdentityNumber", clientInfo.IdentityNumber);
 
                         command.ExecuteNonQuery();
@@ -195,10 +196,10 @@ namespace Loggma1.Controllers
 
                     using (SqlCommand command = new SqlCommand(sql, connection))
                     {
-                        command.Parameters.AddWithValue("@name", updatedClientInfo.Name);
-                        command.Parameters.AddWithValue("@email", updatedClientInfo.Email);
-                        command.Parameters.AddWithValue("@phone", updatedClientInfo.Phone);
-                        command.Parameters.AddWithValue("@address", updatedClientInfo.Address);
+                        command.Parameters.AddWithValue("@name", updatedClientInfo.name);
+                        command.Parameters.AddWithValue("@email", updatedClientInfo.email);
+                        command.Parameters.AddWithValue("@phone", updatedClientInfo.phone);
+                        command.Parameters.AddWithValue("@address", updatedClientInfo.address);
                         command.Parameters.AddWithValue("@IdentityNumber", updatedClientInfo.IdentityNumber); 
                         command.Parameters.AddWithValue("@id", id);
                         command.ExecuteNonQuery();
@@ -218,10 +219,10 @@ namespace Loggma1.Controllers
         /// Headers bölümüne geçin ve Authorization başlığını ekleyin. Değeri olarak "Bearer" ile başlayan ve önceki adımlarda aldığınız JWT token'ını ekleyin.
         /// Body sekmesine geçin ve "raw" seçeneğini seçin. Aşağıda verilen gibi güncel istemci verilerini JSON formatında ekleyin:
         //{
-        //    "name": "Updated Name",
+        //    "name": "Updated name",
         //    "email": "updated@example.com",
         //    "phone": "1234567890",
-        //    "address": "Updated Address",
+        //    "address": "Updated address",
         //    "identityNumber": "12345678901"
         //}
         //şeklinde send yapıldıgında seçili id varsa ve isterler geçerliyse 200 döndürmeli eğer bulamazsa 404 döndürmeli , eğer bearer yanlışsa 401 döndürmeli
@@ -399,26 +400,26 @@ namespace Loggma1.Controllers
         public string Username { get; set; }
         public string Password { get; set; }
     }
-    public class ClientInfo
-    {
-        public int id { get; set; }
+    //public class ClientInfo
+    //{
+    //    public int id { get; set; }
 
-        [Required(ErrorMessage = "Name is required")]
-        public string Name { get; set; }
+    //    [Required(ErrorMessage = "name is required")]
+    //    public string name { get; set; }
 
-        [Required(ErrorMessage = "Email is required")]
-        [EmailAddress(ErrorMessage = "Invalid email format")]
-        public string Email { get; set; }
+    //    [Required(ErrorMessage = "email is required")]
+    //    [emailaddress(ErrorMessage = "Invalid email format")]
+    //    public string email { get; set; }
 
-        [Required(ErrorMessage = "Phone is required")]
-        [Phone(ErrorMessage = "Invalid phone number format")]
-        public string Phone { get; set; }
+    //    [Required(ErrorMessage = "phone is required")]
+    //    [phone(ErrorMessage = "Invalid phone number format")]
+    //    public string phone { get; set; }
 
-        [Required(ErrorMessage = "Address is required")]
-        public string Address { get; set; }
+    //    [Required(ErrorMessage = "address is required")]
+    //    public string address { get; set; }
 
-        [Required(ErrorMessage = "Identity number is required")]
-        public string IdentityNumber { get; set; }
-    }
+    //    [Required(ErrorMessage = "Identity number is required")]
+    //    public string IdentityNumber { get; set; }
+    //}
 
 }
