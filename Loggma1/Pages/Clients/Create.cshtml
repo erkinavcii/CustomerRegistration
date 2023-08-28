@@ -1,10 +1,12 @@
 ﻿@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
 @model Loggma1.Pages.Clients.CreateModel
 @{
 }
 
 <br>
-<h2>New Client</h2>
+<h2>@Localizer["New Client"]</h2>
 @if (Model.errorMessage.Length > 0)
 {
     <div class='alert alert-warning alert-dismissible fade show' role='alert'>
@@ -15,31 +17,31 @@
 
 <form method="POST">
     <div class="row mb-3">
-        <label class="col-sm-3 col-form-label">Name</label>
+        <label class="col-sm-3 col-form-label">@Localizer["Name"]</label>
         <div class="col-sm-6">
             <input type="text" class="form-control" name="name" value="@Model.clientInfo.name">
         </div>
     </div>
     <div class="row mb-3">
-        <label class="col-sm-3 col-form-label">Email</label>
+        <label class="col-sm-3 col-form-label">@Localizer["Email"]</label>
         <div class="col-sm-6">
             <input type="text" class="form-control" name="email" value="@Model.clientInfo.email">
         </div>
     </div>
     <div class="row mb-3">
-        <label class="col-sm-3 col-form-label">Phone</label>
+        <label class="col-sm-3 col-form-label">@Localizer["Phone"]</label>
         <div class="col-sm-6">
             <input type="text" class="form-control" name="phone" value="@Model.clientInfo.phone">
         </div>
     </div>
     <div class="row mb-3">
-        <label class="col-sm-3 col-form-label">Address</label>
+        <label class="col-sm-3 col-form-label">@Localizer["Address"]</label>
         <div class="col-sm-6">
             <input type="text" class="form-control" name="address" value="@Model.clientInfo.address">
         </div>
     </div>
     <div class="row mb-3">
-        <label class="col-sm-3 col-form-label">Identity Number</label>
+        <label class="col-sm-3 col-form-label">@Localizer["Identity Number"]</label>
         <div class="col-sm-6">
             <input type="text" class="form-control" name="IdentityNumber" value="@Model.clientInfo.IdentityNumber">
         </div>
@@ -58,10 +60,10 @@
     }
     <div class="row mb-3">
         <div class="offset-sm-3 col-sm-3 d-grid">
-            <button type="submit" class="btn-primary">Save</button>
+            <button type="submit" class="btn-primary">@Localizer["Save"]</button>
         </div>
         <div class="col-sm-3 d-grid">
-            <a class="btn btn-outline-primary" href="/" role="button">Cancel</a>
+            <a class="btn btn-outline-primary" href="/" role="button">@Localizer["Cancel"]</a>
         </div>
     </div>
 </form>

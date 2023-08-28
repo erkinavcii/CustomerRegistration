@@ -1,4 +1,6 @@
 ﻿@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
@@ -150,9 +152,9 @@
 </head>
 <body>
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
+    <h1 class="display-4">@Localizer["Welcome"]</h1>
     <p>
-Hello, if you haven't logged in yet, click the "Log In" button to start adding, removing, and updating users. </p>
+@Localizer["Hello, if you haven't logged in yet, click the Log In button to start adding, removing, and updating users."] </p>
     <img src="https://www.salesforce.com/content/dam/blogs/ca/Blog%20Posts/Every-Task-a-Customer-Service-Rep-Must-Do-opengraph.png" alt="Salesforce Image" />
 </div>
 </body>

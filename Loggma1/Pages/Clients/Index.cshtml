@@ -1,44 +1,43 @@
 ﻿@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
 @model Loggma1.Pages.Clients.IndexModel
 @{
 }
 <br>
 <form method="post" asp-page-handler="Logout">
-    <button type="submit" class="btn btn-primary btn-sm">Logout</button>
+    <button type="submit" class="btn btn-primary btn-sm">@Localizer["Logout"]</button>
 </form>
 <form method="post">
     <div class="form-group">
-        <label for="SearchTerm">Arama:</label>
-        <input type="text" id="SearchTerm" class="form-control" placeholder="Arama yapın..." asp-for="SearchTerm">
+        <label for="SearchTerm">@Localizer["Search"]:</label>
+        <input type="text" id="SearchTerm" class="form-control" placeholder=@Localizer["Write Here"] asp-for="SearchTerm">
     </div>
 
     <div class="form-group">
-        <label for="SearchBy">Arama Kriteri:</label>
+        <label for="SearchBy">@Localizer["Filter:"]</label>
         <select id="SearchBy" class="form-control" asp-for="SearchBy">
-            <option value="name">Ad</option>
-            <option value="email">E-posta</option>
-            <option value="phone">Telefon</option>
-            <!-- Diğer kriterleri buraya ekleyin -->
+            <option value="name">@Localizer["Name"]</option>
+            <option value="email">@Localizer["E-mail"]</option>
+            <option value="phone">@Localizer["Phone"]</option>
         </select>
     </div>
     <br />
-    <br />
-    <br />
-    <button type="submit" class="btn btn-primary">Ara</button>
+    <button type="submit" class="btn btn-primary">@Localizer["Search"]</button>
 </form>
 
-<h2>List of Clients</h2>
-<a class='btn btn-primary btn-sm' href='/Clients/Create'>New Client</a>
+<h2>@Localizer["List of Clients"]</h2>
+<a class='btn btn-primary btn-sm' href='/Clients/Create'>@Localizer["New Client"]</a>
 <table class="table">
     <thead>
         <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Address</th>
-            <th>Identity Number</th> <!-- Ekledik -->
-            <th>Action</th>
+            <th>@Localizer["ID"]</th>
+            <th>@Localizer["Name"]</th>
+            <th>@Localizer["Email"]</th>
+            <th>@Localizer["Phone"]</th>
+            <th>@Localizer["Address"]</th>
+            <th>@Localizer["Identity Number"]</th> 
+            <th>@Localizer["Action"]</th>
         </tr>
     </thead>
     <tbody>
@@ -50,10 +49,10 @@
                 <td>@item.email</td>
                 <td>@item.phone</td>
                 <td>@item.address</td>
-                <td>@item.IdentityNumber</td> <!-- Ekledik -->
+                <td>@item.IdentityNumber</td> 
                 <td>
-                    <a class="btn btn-primary btn-sm" asp-page="/Clients/Edit" asp-route-id="@item.id">Edit</a>
-                    <a class="btn btn-danger btn-sm" asp-page="/Clients/Delete" asp-route-id="@item.id">Delete</a>
+                    <a class="btn btn-primary btn-sm" asp-page="/Clients/Edit" asp-route-id="@item.id">@Localizer["Edit"]</a>
+                    <a class="btn btn-danger btn-sm" asp-page="/Clients/Delete" asp-route-id="@item.id">@Localizer["Delete"]</a>
                 </td>
             </tr>
         }
