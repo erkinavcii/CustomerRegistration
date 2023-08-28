@@ -14,6 +14,11 @@ namespace Loggma1.Pages.Clients
     {
         public List<ClientInfo> listClients = new List<ClientInfo>();
 
+        [BindProperty]
+        public string SearchTerm { get; set; }
+
+        [BindProperty]
+        public string SearchBy { get; set; }
         public void OnGet()
         {
             try
@@ -89,29 +94,90 @@ namespace Loggma1.Pages.Clients
             // Kullanýcýyý Login sayfasýna yönlendirin
             return RedirectToPage("/Login");
         }
+        public IActionResult OnPost()
+        {
+            try
+            {
+                string token = Request.Cookies["JwtToken"];
+
+                if (string.IsNullOrEmpty(token) || !IsValidToken(token))
+                {
+                    // Token geçerli deðilse veya yoksa, Unauthorized hatasý göster
+                    return RedirectToPage("/Login"); // Unauthorized
+                }
+
+                listClients = new List<ClientInfo>(); // Sýfýrla
+
+                // Kullanýcýnýn seçtiði kritere göre arama yapýn (SearchBy ile filtreleyin)
+                if (!string.IsNullOrEmpty(SearchTerm) && !string.IsNullOrEmpty(SearchBy))
+                {
+                    string connectionString = "Data Source=localhost\\MSSQLSERVER01;Initial Catalog=mystore;Integrated Security=True";
+                    using (SqlConnection connection = new SqlConnection(connectionString))
+                    {
+                        connection.Open();
+                        string sql = $"SELECT * FROM clients WHERE {SearchBy} LIKE @SearchTerm";
+                        using (SqlCommand command = new SqlCommand(sql, connection))
+                        {
+                            command.Parameters.AddWithValue("@SearchTerm", $"%{SearchTerm}%");
+
+                            using (SqlDataReader reader = command.ExecuteReader())
+                            {
+                                while (reader.Read())
+                                {
+                                    ClientInfo clientInfo = new ClientInfo
+                                    {
+                                        id = reader.GetInt32(0),
+                                        name = reader.GetString(1),
+                                        email = reader.GetString(2),
+                                        phone = reader.GetString(3),
+                                        address = reader.GetString(4),
+                                        IdentityNumber = reader.GetString(5)
+                                    };
+                                    listClients.Add(clientInfo);
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    // Eðer arama terimi veya kriter boþsa, tüm müþterileri yükleyin
+                    OnGet();
+                }
+
+                // Arama sonuçlarýný view'e gönderin
+                return Page();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception: " + ex.ToString());
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
     }
 
-   
 
-//public class ClientInfo
-//    {
-//        public int id { get; set; }
 
-//        [Required(ErrorMessage = "Name is required")]
-//        public string name { get; set; }
+    //public class ClientInfo
+    //    {
+    //        public int id { get; set; }
 
-//        [Required(ErrorMessage = "Email is required")]
-//        [EmailAddress(ErrorMessage = "Invalid email format")]
-//        public string email { get; set; }
+    //        [Required(ErrorMessage = "Name is required")]
+    //        public string name { get; set; }
 
-//        [Required(ErrorMessage = "Phone is required")]
-//        public string phone { get; set; }
+    //        [Required(ErrorMessage = "Email is required")]
+    //        [EmailAddress(ErrorMessage = "Invalid email format")]
+    //        public string email { get; set; }
 
-//        [Required(ErrorMessage = "Address is required")]
-//        public string address { get; set; }
+    //        [Required(ErrorMessage = "Phone is required")]
+    //        public string phone { get; set; }
 
-//        [Required(ErrorMessage = "IdentityNumber is required")]
-//        public string IdentityNumber { get; set; }
-//    }
+    //        [Required(ErrorMessage = "Address is required")]
+    //        public string address { get; set; }
+
+    //        [Required(ErrorMessage = "IdentityNumber is required")]
+    //        public string IdentityNumber { get; set; }
+    //    }
 
 }
